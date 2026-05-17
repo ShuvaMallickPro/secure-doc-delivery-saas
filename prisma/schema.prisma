@@ -1,0 +1,30 @@
+generator client {
+  provider = "prisma-client"
+  output   = "../generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model Document {
+  id        String   @id @default(cuid())
+  name      String
+  s3Key     String
+  s3Url     String
+  ownerId   String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  shares    ShareLink[]
+}
+
+model ShareLink {
+  id             String    @id @default(cuid())
+  token          String    @unique @default(uuid())
+  documentId     String
+  document       Document  @relation(fields: [documentId], references: [id], onDelete: Cascade)
+  recipientEmail String
+  revokedAt      DateTime?
+  expiresAt      DateTime?
+  createdAt      DateTime  @default(now())
+}
