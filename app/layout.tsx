@@ -24,7 +24,20 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <ClerkProvider>
+    <ClerkProvider
+      appearance={{
+        baseTheme: undefined,
+        variables: {
+          colorPrimary: "hsl(var(--primary))",
+          colorBackground: "hsl(var(--background))",
+          borderRadius: "0.5rem",
+        },
+        elements: {
+          card: "shadow-none border border-border",
+          // headerTitle: "hidden",
+        },
+      }}
+    >
       <html
         lang="en"
         className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
