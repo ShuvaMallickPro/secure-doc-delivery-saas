@@ -17,6 +17,7 @@ export default function DashboardLayout({
             SecureDoc
           </Link>
         </div>
+
         <nav className="flex flex-1 flex-col gap-1 p-3">
           <Link
             href="/dashboard"
