@@ -14,8 +14,13 @@ export default async function DocumentsPage() {
   });
 
   return (
-    <div>
-      <h1 className="mb-6 text-2xl font-bold">My Documents</h1>
+    <div className="space-y-6">
+      <div className="space-y-1 md:hidden">
+        <h2 className="text-2xl font-bold tracking-tight">My Documents</h2>
+        <p className="text-sm text-muted-foreground">
+          Upload files and manage share links.
+        </p>
+      </div>
       <DocumentList documents={documents} />
     </div>
   );
