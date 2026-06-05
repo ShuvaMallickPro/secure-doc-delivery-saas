@@ -60,7 +60,7 @@ export default async function DashboardPage() {
         where: { ownerId: userId },
         orderBy: { createdAt: "desc" },
         take: 5,
-        include: { shares: true },
+        include: { shares: { orderBy: { createdAt: "desc" } } },
       }),
     ]);
 

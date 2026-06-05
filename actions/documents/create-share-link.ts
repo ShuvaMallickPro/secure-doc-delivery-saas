@@ -15,19 +15,22 @@ export async function createShareLink(
   });
   if (!doc) throw new Error("Document not found");
 
+  const email = recipientEmail.trim().toLowerCase();
+  if (!email || !email.includes("@")) {
+    throw new Error("A valid recipient email is required");
+  }
+
   const link = await prisma.shareLink.create({
     data: {
       documentId,
-      recipientEmail,
+      recipientEmail: email,
     },
   });
 
-  const appUrl =
-    process.env.NEXT_PUBLIC_APP_URL?.replace(/\/$/, "") ??
-    "http://localhost:3000";
+  const { buildShareUrl } = await import("@/lib/share-utils");
 
   return {
     token: link.token,
-    shareUrl: `${appUrl}/view/${link.token}`,
+    shareUrl: buildShareUrl(link.token),
   };
 }

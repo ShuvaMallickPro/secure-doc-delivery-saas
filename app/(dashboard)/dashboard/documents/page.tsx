@@ -10,7 +10,9 @@ export default async function DocumentsPage() {
   const documents = await prisma.document.findMany({
     where: { ownerId: userId },
     orderBy: { createdAt: "desc" },
-    include: { shares: true },
+    include: {
+      shares: { orderBy: { createdAt: "desc" } },
+    },
   });
 
   return (
