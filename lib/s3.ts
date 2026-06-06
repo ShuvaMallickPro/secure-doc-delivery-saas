@@ -35,3 +35,18 @@ export async function getDownloadUrl(key: string) {
 
   return getSignedUrl(s3Client, command, { expiresIn: 3600 });
 }
+
+export async function getObjectBuffer(key: string): Promise<Buffer> {
+  const command = new GetObjectCommand({
+    Bucket: process.env.AWS_S3_BUCKET_NAME!,
+    Key: key,
+  });
+
+  const response = await s3Client.send(command);
+  if (!response.Body) {
+    throw new Error("File not found in storage");
+  }
+
+  const bytes = await response.Body.transformToByteArray();
+  return Buffer.from(bytes);
+}

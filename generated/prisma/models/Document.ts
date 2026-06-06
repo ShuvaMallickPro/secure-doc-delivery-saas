@@ -30,6 +30,9 @@ export type DocumentMinAggregateOutputType = {
   s3Key: string | null
   s3Url: string | null
   ownerId: string | null
+  aiSummary: string | null
+  aiSummaryStatus: string | null
+  aiSummaryError: string | null
   createdAt: Date | null
   updatedAt: Date | null
 }
@@ -40,6 +43,9 @@ export type DocumentMaxAggregateOutputType = {
   s3Key: string | null
   s3Url: string | null
   ownerId: string | null
+  aiSummary: string | null
+  aiSummaryStatus: string | null
+  aiSummaryError: string | null
   createdAt: Date | null
   updatedAt: Date | null
 }
@@ -50,6 +56,9 @@ export type DocumentCountAggregateOutputType = {
   s3Key: number
   s3Url: number
   ownerId: number
+  aiSummary: number
+  aiSummaryStatus: number
+  aiSummaryError: number
   createdAt: number
   updatedAt: number
   _all: number
@@ -62,6 +71,9 @@ export type DocumentMinAggregateInputType = {
   s3Key?: true
   s3Url?: true
   ownerId?: true
+  aiSummary?: true
+  aiSummaryStatus?: true
+  aiSummaryError?: true
   createdAt?: true
   updatedAt?: true
 }
@@ -72,6 +84,9 @@ export type DocumentMaxAggregateInputType = {
   s3Key?: true
   s3Url?: true
   ownerId?: true
+  aiSummary?: true
+  aiSummaryStatus?: true
+  aiSummaryError?: true
   createdAt?: true
   updatedAt?: true
 }
@@ -82,6 +97,9 @@ export type DocumentCountAggregateInputType = {
   s3Key?: true
   s3Url?: true
   ownerId?: true
+  aiSummary?: true
+  aiSummaryStatus?: true
+  aiSummaryError?: true
   createdAt?: true
   updatedAt?: true
   _all?: true
@@ -165,6 +183,9 @@ export type DocumentGroupByOutputType = {
   s3Key: string
   s3Url: string
   ownerId: string
+  aiSummary: string | null
+  aiSummaryStatus: string | null
+  aiSummaryError: string | null
   createdAt: Date
   updatedAt: Date
   _count: DocumentCountAggregateOutputType | null
@@ -196,6 +217,9 @@ export type DocumentWhereInput = {
   s3Key?: Prisma.StringFilter<"Document"> | string
   s3Url?: Prisma.StringFilter<"Document"> | string
   ownerId?: Prisma.StringFilter<"Document"> | string
+  aiSummary?: Prisma.StringNullableFilter<"Document"> | string | null
+  aiSummaryStatus?: Prisma.StringNullableFilter<"Document"> | string | null
+  aiSummaryError?: Prisma.StringNullableFilter<"Document"> | string | null
   createdAt?: Prisma.DateTimeFilter<"Document"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"Document"> | Date | string
   shares?: Prisma.ShareLinkListRelationFilter
@@ -207,6 +231,9 @@ export type DocumentOrderByWithRelationInput = {
   s3Key?: Prisma.SortOrder
   s3Url?: Prisma.SortOrder
   ownerId?: Prisma.SortOrder
+  aiSummary?: Prisma.SortOrderInput | Prisma.SortOrder
+  aiSummaryStatus?: Prisma.SortOrderInput | Prisma.SortOrder
+  aiSummaryError?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   shares?: Prisma.ShareLinkOrderByRelationAggregateInput
@@ -221,6 +248,9 @@ export type DocumentWhereUniqueInput = Prisma.AtLeast<{
   s3Key?: Prisma.StringFilter<"Document"> | string
   s3Url?: Prisma.StringFilter<"Document"> | string
   ownerId?: Prisma.StringFilter<"Document"> | string
+  aiSummary?: Prisma.StringNullableFilter<"Document"> | string | null
+  aiSummaryStatus?: Prisma.StringNullableFilter<"Document"> | string | null
+  aiSummaryError?: Prisma.StringNullableFilter<"Document"> | string | null
   createdAt?: Prisma.DateTimeFilter<"Document"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"Document"> | Date | string
   shares?: Prisma.ShareLinkListRelationFilter
@@ -232,6 +262,9 @@ export type DocumentOrderByWithAggregationInput = {
   s3Key?: Prisma.SortOrder
   s3Url?: Prisma.SortOrder
   ownerId?: Prisma.SortOrder
+  aiSummary?: Prisma.SortOrderInput | Prisma.SortOrder
+  aiSummaryStatus?: Prisma.SortOrderInput | Prisma.SortOrder
+  aiSummaryError?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   _count?: Prisma.DocumentCountOrderByAggregateInput
@@ -248,6 +281,9 @@ export type DocumentScalarWhereWithAggregatesInput = {
   s3Key?: Prisma.StringWithAggregatesFilter<"Document"> | string
   s3Url?: Prisma.StringWithAggregatesFilter<"Document"> | string
   ownerId?: Prisma.StringWithAggregatesFilter<"Document"> | string
+  aiSummary?: Prisma.StringNullableWithAggregatesFilter<"Document"> | string | null
+  aiSummaryStatus?: Prisma.StringNullableWithAggregatesFilter<"Document"> | string | null
+  aiSummaryError?: Prisma.StringNullableWithAggregatesFilter<"Document"> | string | null
   createdAt?: Prisma.DateTimeWithAggregatesFilter<"Document"> | Date | string
   updatedAt?: Prisma.DateTimeWithAggregatesFilter<"Document"> | Date | string
 }
@@ -258,6 +294,9 @@ export type DocumentCreateInput = {
   s3Key: string
   s3Url: string
   ownerId: string
+  aiSummary?: string | null
+  aiSummaryStatus?: string | null
+  aiSummaryError?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   shares?: Prisma.ShareLinkCreateNestedManyWithoutDocumentInput
@@ -269,6 +308,9 @@ export type DocumentUncheckedCreateInput = {
   s3Key: string
   s3Url: string
   ownerId: string
+  aiSummary?: string | null
+  aiSummaryStatus?: string | null
+  aiSummaryError?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   shares?: Prisma.ShareLinkUncheckedCreateNestedManyWithoutDocumentInput
@@ -280,6 +322,9 @@ export type DocumentUpdateInput = {
   s3Key?: Prisma.StringFieldUpdateOperationsInput | string
   s3Url?: Prisma.StringFieldUpdateOperationsInput | string
   ownerId?: Prisma.StringFieldUpdateOperationsInput | string
+  aiSummary?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  aiSummaryStatus?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  aiSummaryError?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   shares?: Prisma.ShareLinkUpdateManyWithoutDocumentNestedInput
@@ -291,6 +336,9 @@ export type DocumentUncheckedUpdateInput = {
   s3Key?: Prisma.StringFieldUpdateOperationsInput | string
   s3Url?: Prisma.StringFieldUpdateOperationsInput | string
   ownerId?: Prisma.StringFieldUpdateOperationsInput | string
+  aiSummary?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  aiSummaryStatus?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  aiSummaryError?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   shares?: Prisma.ShareLinkUncheckedUpdateManyWithoutDocumentNestedInput
@@ -302,6 +350,9 @@ export type DocumentCreateManyInput = {
   s3Key: string
   s3Url: string
   ownerId: string
+  aiSummary?: string | null
+  aiSummaryStatus?: string | null
+  aiSummaryError?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
 }
@@ -312,6 +363,9 @@ export type DocumentUpdateManyMutationInput = {
   s3Key?: Prisma.StringFieldUpdateOperationsInput | string
   s3Url?: Prisma.StringFieldUpdateOperationsInput | string
   ownerId?: Prisma.StringFieldUpdateOperationsInput | string
+  aiSummary?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  aiSummaryStatus?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  aiSummaryError?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -322,6 +376,9 @@ export type DocumentUncheckedUpdateManyInput = {
   s3Key?: Prisma.StringFieldUpdateOperationsInput | string
   s3Url?: Prisma.StringFieldUpdateOperationsInput | string
   ownerId?: Prisma.StringFieldUpdateOperationsInput | string
+  aiSummary?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  aiSummaryStatus?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  aiSummaryError?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -332,6 +389,9 @@ export type DocumentCountOrderByAggregateInput = {
   s3Key?: Prisma.SortOrder
   s3Url?: Prisma.SortOrder
   ownerId?: Prisma.SortOrder
+  aiSummary?: Prisma.SortOrder
+  aiSummaryStatus?: Prisma.SortOrder
+  aiSummaryError?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
 }
@@ -342,6 +402,9 @@ export type DocumentMaxOrderByAggregateInput = {
   s3Key?: Prisma.SortOrder
   s3Url?: Prisma.SortOrder
   ownerId?: Prisma.SortOrder
+  aiSummary?: Prisma.SortOrder
+  aiSummaryStatus?: Prisma.SortOrder
+  aiSummaryError?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
 }
@@ -352,6 +415,9 @@ export type DocumentMinOrderByAggregateInput = {
   s3Key?: Prisma.SortOrder
   s3Url?: Prisma.SortOrder
   ownerId?: Prisma.SortOrder
+  aiSummary?: Prisma.SortOrder
+  aiSummaryStatus?: Prisma.SortOrder
+  aiSummaryError?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
 }
@@ -363,6 +429,10 @@ export type DocumentScalarRelationFilter = {
 
 export type StringFieldUpdateOperationsInput = {
   set?: string
+}
+
+export type NullableStringFieldUpdateOperationsInput = {
+  set?: string | null
 }
 
 export type DateTimeFieldUpdateOperationsInput = {
@@ -389,6 +459,9 @@ export type DocumentCreateWithoutSharesInput = {
   s3Key: string
   s3Url: string
   ownerId: string
+  aiSummary?: string | null
+  aiSummaryStatus?: string | null
+  aiSummaryError?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
 }
@@ -399,6 +472,9 @@ export type DocumentUncheckedCreateWithoutSharesInput = {
   s3Key: string
   s3Url: string
   ownerId: string
+  aiSummary?: string | null
+  aiSummaryStatus?: string | null
+  aiSummaryError?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
 }
@@ -425,6 +501,9 @@ export type DocumentUpdateWithoutSharesInput = {
   s3Key?: Prisma.StringFieldUpdateOperationsInput | string
   s3Url?: Prisma.StringFieldUpdateOperationsInput | string
   ownerId?: Prisma.StringFieldUpdateOperationsInput | string
+  aiSummary?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  aiSummaryStatus?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  aiSummaryError?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -435,6 +514,9 @@ export type DocumentUncheckedUpdateWithoutSharesInput = {
   s3Key?: Prisma.StringFieldUpdateOperationsInput | string
   s3Url?: Prisma.StringFieldUpdateOperationsInput | string
   ownerId?: Prisma.StringFieldUpdateOperationsInput | string
+  aiSummary?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  aiSummaryStatus?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  aiSummaryError?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -476,6 +558,9 @@ export type DocumentSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs
   s3Key?: boolean
   s3Url?: boolean
   ownerId?: boolean
+  aiSummary?: boolean
+  aiSummaryStatus?: boolean
+  aiSummaryError?: boolean
   createdAt?: boolean
   updatedAt?: boolean
   shares?: boolean | Prisma.Document$sharesArgs<ExtArgs>
@@ -488,6 +573,9 @@ export type DocumentSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Exte
   s3Key?: boolean
   s3Url?: boolean
   ownerId?: boolean
+  aiSummary?: boolean
+  aiSummaryStatus?: boolean
+  aiSummaryError?: boolean
   createdAt?: boolean
   updatedAt?: boolean
 }, ExtArgs["result"]["document"]>
@@ -498,6 +586,9 @@ export type DocumentSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Exte
   s3Key?: boolean
   s3Url?: boolean
   ownerId?: boolean
+  aiSummary?: boolean
+  aiSummaryStatus?: boolean
+  aiSummaryError?: boolean
   createdAt?: boolean
   updatedAt?: boolean
 }, ExtArgs["result"]["document"]>
@@ -508,11 +599,14 @@ export type DocumentSelectScalar = {
   s3Key?: boolean
   s3Url?: boolean
   ownerId?: boolean
+  aiSummary?: boolean
+  aiSummaryStatus?: boolean
+  aiSummaryError?: boolean
   createdAt?: boolean
   updatedAt?: boolean
 }
 
-export type DocumentOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "name" | "s3Key" | "s3Url" | "ownerId" | "createdAt" | "updatedAt", ExtArgs["result"]["document"]>
+export type DocumentOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "name" | "s3Key" | "s3Url" | "ownerId" | "aiSummary" | "aiSummaryStatus" | "aiSummaryError" | "createdAt" | "updatedAt", ExtArgs["result"]["document"]>
 export type DocumentInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   shares?: boolean | Prisma.Document$sharesArgs<ExtArgs>
   _count?: boolean | Prisma.DocumentCountOutputTypeDefaultArgs<ExtArgs>
@@ -531,6 +625,9 @@ export type $DocumentPayload<ExtArgs extends runtime.Types.Extensions.InternalAr
     s3Key: string
     s3Url: string
     ownerId: string
+    aiSummary: string | null
+    aiSummaryStatus: string | null
+    aiSummaryError: string | null
     createdAt: Date
     updatedAt: Date
   }, ExtArgs["result"]["document"]>
@@ -962,6 +1059,9 @@ export interface DocumentFieldRefs {
   readonly s3Key: Prisma.FieldRef<"Document", 'String'>
   readonly s3Url: Prisma.FieldRef<"Document", 'String'>
   readonly ownerId: Prisma.FieldRef<"Document", 'String'>
+  readonly aiSummary: Prisma.FieldRef<"Document", 'String'>
+  readonly aiSummaryStatus: Prisma.FieldRef<"Document", 'String'>
+  readonly aiSummaryError: Prisma.FieldRef<"Document", 'String'>
   readonly createdAt: Prisma.FieldRef<"Document", 'DateTime'>
   readonly updatedAt: Prisma.FieldRef<"Document", 'DateTime'>
 }

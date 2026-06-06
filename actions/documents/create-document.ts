@@ -2,6 +2,8 @@
 
 import { auth } from "@clerk/nextjs/server";
 import { revalidatePath } from "next/cache";
+import { after } from "next/server";
+import { AI_SUMMARY_STATUS, runDocumentSummaryJob } from "@/lib/document-summary";
 import { getPublicUrl, getUploadUrl } from "@/lib/s3";
 import { prisma } from "@/lib/prisma";
 
@@ -34,7 +36,12 @@ export async function createDocument(formData: FormData) {
       s3Key: key,
       s3Url: getPublicUrl(key),
       ownerId: userId,
+      aiSummaryStatus: AI_SUMMARY_STATUS.PENDING,
     },
+  });
+
+  after(() => {
+    void runDocumentSummaryJob(doc.id);
   });
 
   revalidatePath("/dashboard/documents");

@@ -1,5 +1,6 @@
 import { getDownloadUrl } from "@/lib/s3";
 import { prisma } from "@/lib/prisma";
+import { DocumentAiSummary } from "@/components/documents/document-ai-summary";
 
 type ViewPageProps = {
   params: Promise<{ token: string }>;
@@ -86,6 +87,12 @@ export default async function ViewPage({ params }: ViewPageProps) {
           <p className="mb-6 text-sm text-muted-foreground">
             Shared securely. Download only while access is active.
           </p>
+
+          <DocumentAiSummary
+            status={link.document.aiSummaryStatus}
+            summary={link.document.aiSummary}
+            error={link.document.aiSummaryError}
+          />
 
           <div className="mb-6 overflow-hidden rounded-lg border border-dashed border-border bg-muted/30">
             {fileKind === "pdf" ? (

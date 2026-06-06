@@ -77,6 +77,9 @@ export const DocumentScalarFieldEnum = {
   s3Key: 's3Key',
   s3Url: 's3Url',
   ownerId: 'ownerId',
+  aiSummary: 'aiSummary',
+  aiSummaryStatus: 'aiSummaryStatus',
+  aiSummaryError: 'aiSummaryError',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
 } as const

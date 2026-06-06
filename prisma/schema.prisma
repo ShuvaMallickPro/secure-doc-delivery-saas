@@ -8,14 +8,17 @@ datasource db {
 }
 
 model Document {
-  id        String   @id @default(cuid())
-  name      String
-  s3Key     String
-  s3Url     String
-  ownerId   String
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-  shares    ShareLink[]
+  id              String   @id @default(cuid())
+  name            String
+  s3Key           String
+  s3Url           String
+  ownerId         String
+  aiSummary       String?
+  aiSummaryStatus String?  @default("pending")
+  aiSummaryError  String?
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+  shares          ShareLink[]
 }
 
 model ShareLink {

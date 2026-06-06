@@ -2,7 +2,8 @@
 
 import { Fragment, useState } from "react";
 import { ChevronDown, ChevronRight } from "lucide-react";
-import { createDocument } from "@/actions/documents";
+import { createDocument, generateDocumentSummary } from "@/actions/documents";
+import { AI_SUMMARY_STATUS } from "@/lib/document-summary";
 import type { DocumentModel } from "@/generated/prisma/models/Document";
 import type { ShareLinkModel } from "@/generated/prisma/models/ShareLink";
 import { DocumentSharesPanel } from "@/components/documents/document-shares-panel";
@@ -12,6 +13,21 @@ import { Badge } from "@/components/ui/badge";
 import { getDocumentShareSummary } from "@/lib/share-utils";
 
 type DocumentWithShares = DocumentModel & { shares: ShareLinkModel[] };
+
+function getAiSummaryBadge(status: string | null) {
+  switch (status) {
+    case AI_SUMMARY_STATUS.READY:
+      return { label: "AI summary ready", variant: "default" as const };
+    case AI_SUMMARY_STATUS.PENDING:
+      return { label: "AI generating…", variant: "secondary" as const };
+    case AI_SUMMARY_STATUS.FAILED:
+      return { label: "AI failed", variant: "destructive" as const };
+    case AI_SUMMARY_STATUS.SKIPPED:
+      return { label: "AI skipped", variant: "outline" as const };
+    default:
+      return null;
+  }
+}
 
 export function DocumentList({
   documents,
@@ -31,6 +47,11 @@ export function DocumentList({
 
   function toggleExpanded(docId: string) {
     setExpandedDocId((current) => (current === docId ? null : docId));
+  }
+
+  async function handleRetrySummary(documentId: string) {
+    await generateDocumentSummary(documentId);
+    window.location.reload();
   }
 
   return (
@@ -80,13 +101,28 @@ export function DocumentList({
             ) : (
               documents.map((doc) => {
                 const summary = getDocumentShareSummary(doc.shares);
+                const aiBadge = getAiSummaryBadge(doc.aiSummaryStatus);
                 const isExpanded = expandedDocId === doc.id;
 
                 return (
                   <Fragment key={doc.id}>
                     <tr className="hover:bg-muted/30">
                       <td className="px-6 py-4 text-sm font-medium">
-                        {doc.name}
+                        <div className="space-y-1">
+                          <p>{doc.name}</p>
+                          {aiBadge ? (
+                            <Badge
+                              variant={aiBadge.variant}
+                              className={
+                                aiBadge.variant === "default"
+                                  ? "bg-primary/10 text-primary hover:bg-primary/10"
+                                  : undefined
+                              }
+                            >
+                              {aiBadge.label}
+                            </Badge>
+                          ) : null}
+                        </div>
                       </td>
                       <td className="px-6 py-4">
                         <Badge
@@ -143,6 +179,16 @@ export function DocumentList({
                             <p className="text-sm font-medium">
                               Share links for {doc.name}
                             </p>
+                            {doc.aiSummaryStatus === AI_SUMMARY_STATUS.FAILED ? (
+                              <Button
+                                type="button"
+                                variant="outline"
+                                size="sm"
+                                onClick={() => handleRetrySummary(doc.id)}
+                              >
+                                Retry AI summary
+                              </Button>
+                            ) : null}
                             <DocumentSharesPanel shares={doc.shares} />
                           </div>
                         </td>
