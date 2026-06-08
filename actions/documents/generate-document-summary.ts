@@ -7,6 +7,7 @@ import { prisma } from "@/lib/prisma";
 
 export async function generateDocumentSummary(documentId: string) {
   const { userId } = await auth();
+
   if (!userId) throw new Error("Unauthorized");
 
   const document = await prisma.document.findFirst({

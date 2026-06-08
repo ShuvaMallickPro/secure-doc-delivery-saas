@@ -3,7 +3,10 @@
 import { auth } from "@clerk/nextjs/server";
 import { revalidatePath } from "next/cache";
 import { after } from "next/server";
-import { AI_SUMMARY_STATUS, runDocumentSummaryJob } from "@/lib/document-summary";
+import {
+  AI_SUMMARY_STATUS,
+  runDocumentSummaryJob,
+} from "@/lib/document-summary";
 import { getPublicUrl, getUploadUrl } from "@/lib/s3";
 import { prisma } from "@/lib/prisma";
 
