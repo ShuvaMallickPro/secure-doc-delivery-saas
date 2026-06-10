@@ -3,7 +3,7 @@
 import { Fragment, useState } from "react";
 import { ChevronDown, ChevronRight } from "lucide-react";
 import { createDocument, generateDocumentSummary } from "@/actions/documents";
-import { AI_SUMMARY_STATUS } from "@/lib/document-summary";
+import { AI_SUMMARY_STATUS } from "@/lib/ai-summary-status";
 import type { DocumentModel } from "@/generated/prisma/models/Document";
 import type { ShareLinkModel } from "@/generated/prisma/models/ShareLink";
 import { DocumentSharesPanel } from "@/components/documents/document-shares-panel";

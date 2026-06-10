@@ -1,17 +1,12 @@
+import "server-only";
+
 import OpenAI from "openai";
 import { revalidatePath } from "next/cache";
+import { AI_SUMMARY_STATUS } from "@/lib/ai-summary-status";
 import { getObjectBuffer } from "@/lib/s3";
 import { prisma } from "@/lib/prisma";
 
-export const AI_SUMMARY_STATUS = {
-  PENDING: "pending",
-  READY: "ready",
-  FAILED: "failed",
-  SKIPPED: "skipped",
-} as const;
-
 const MAX_TEXT_CHARS = 12_000;
-
 function getExtension(fileName: string) {
   return fileName.split(".").pop()?.toLowerCase() ?? "";
 }

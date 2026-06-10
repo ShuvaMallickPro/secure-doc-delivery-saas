@@ -1,4 +1,4 @@
-import { AI_SUMMARY_STATUS } from "@/lib/document-summary";
+import { AI_SUMMARY_STATUS } from "@/lib/ai-summary-status";
 
 export function DocumentAiSummary({
   status,
