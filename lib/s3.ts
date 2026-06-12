@@ -1,4 +1,5 @@
 import {
+  DeleteObjectCommand,
   GetObjectCommand,
   PutObjectCommand,
   S3Client,
@@ -49,4 +50,13 @@ export async function getObjectBuffer(key: string): Promise<Buffer> {
 
   const bytes = await response.Body.transformToByteArray();
   return Buffer.from(bytes);
+}
+
+export async function deleteObject(key: string) {
+  await s3Client.send(
+    new DeleteObjectCommand({
+      Bucket: process.env.AWS_S3_BUCKET_NAME!,
+      Key: key,
+    }),
+  );
 }

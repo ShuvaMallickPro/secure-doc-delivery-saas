@@ -6,6 +6,7 @@ import { createDocument, generateDocumentSummary } from "@/actions/documents";
 import { AI_SUMMARY_STATUS } from "@/lib/ai-summary-status";
 import type { DocumentModel } from "@/generated/prisma/models/Document";
 import type { ShareLinkModel } from "@/generated/prisma/models/ShareLink";
+import { DeleteDocumentDialog } from "@/components/documents/delete-document-dialog";
 import { DocumentSharesPanel } from "@/components/documents/document-shares-panel";
 import { ShareLinkDialog } from "@/components/documents/share-link-dialog";
 import { Button } from "@/components/ui/button";
@@ -83,7 +84,7 @@ export function DocumentList({
               <th className="px-6 py-3 text-left text-sm font-medium text-muted-foreground">
                 Uploaded
               </th>
-              <th className="px-6 py-3 text-left text-sm font-medium text-muted-foreground">
+              <th className="px-6 py-3 text-center text-sm font-medium text-muted-foreground">
                 Actions
               </th>
             </tr>
@@ -139,7 +140,7 @@ export function DocumentList({
                       <td className="px-6 py-4 text-sm text-muted-foreground">
                         {new Date(doc.createdAt).toLocaleDateString()}
                       </td>
-                      <td className="space-x-2 px-6 py-4">
+                      <td className="flex items-center justify-center gap-3 px-6 py-4">
                         <Button
                           type="button"
                           variant="link"
@@ -170,6 +171,10 @@ export function DocumentList({
                             )}
                           </Button>
                         ) : null}
+                        <DeleteDocumentDialog
+                          documentId={doc.id}
+                          documentName={doc.name}
+                        />
                       </td>
                     </tr>
                     {isExpanded ? (
@@ -179,7 +184,8 @@ export function DocumentList({
                             <p className="text-sm font-medium">
                               Share links for {doc.name}
                             </p>
-                            {doc.aiSummaryStatus === AI_SUMMARY_STATUS.FAILED ? (
+                            {doc.aiSummaryStatus ===
+                            AI_SUMMARY_STATUS.FAILED ? (
                               <Button
                                 type="button"
                                 variant="outline"
