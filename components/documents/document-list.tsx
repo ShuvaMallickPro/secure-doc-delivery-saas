@@ -140,7 +140,7 @@ export function DocumentList({
                       <td className="px-6 py-4 text-sm text-muted-foreground">
                         {new Date(doc.createdAt).toLocaleDateString()}
                       </td>
-                      <td className="flex items-center justify-center gap-3 px-6 py-4">
+                      <td className="flex items-center justify-center gap-3 px-6 py-4 mt-2">
                         <Button
                           type="button"
                           variant="link"

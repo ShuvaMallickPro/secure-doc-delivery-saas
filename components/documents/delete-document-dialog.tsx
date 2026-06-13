@@ -35,7 +35,9 @@ export function DeleteDocumentDialog({
       setOpen(false);
       window.location.reload();
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Failed to delete document");
+      setError(
+        err instanceof Error ? err.message : "Failed to delete document",
+      );
       setPending(false);
     }
   }
@@ -47,10 +49,10 @@ export function DeleteDocumentDialog({
           type="button"
           variant="ghost"
           size="icon"
-          className="size-8 text-muted-foreground hover:text-destructive"
+          className="size-8 text-muted-foreground hover:text-destructive cursor-pointer"
           aria-label={`Delete ${documentName}`}
         >
-          <Trash className="size-4" />
+          <Trash className="size-4 " />
         </Button>
       </AlertDialogTrigger>
       <AlertDialogContent>
@@ -61,14 +63,14 @@ export function DeleteDocumentDialog({
             storage and remove all share links. This action cannot be undone.
           </AlertDialogDescription>
         </AlertDialogHeader>
-        {error ? (
-          <p className="text-sm text-destructive">{error}</p>
-        ) : null}
+        {error ? <p className="text-sm text-destructive">{error}</p> : null}
         <AlertDialogFooter>
-          <AlertDialogCancel disabled={pending}>Cancel</AlertDialogCancel>
+          <AlertDialogCancel disabled={pending} className="cursor-pointer">
+            Cancel
+          </AlertDialogCancel>
           <AlertDialogAction
             disabled={pending}
-            className="bg-destructive text-white hover:bg-destructive/90"
+            className="bg-destructive text-white hover:bg-destructive/90 cursor-pointer"
             onClick={(e) => {
               e.preventDefault();
               void handleDelete();
