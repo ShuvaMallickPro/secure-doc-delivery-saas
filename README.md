@@ -2,10 +2,12 @@
 
 A lean MVP for **secure document delivery with revocable access**. Senders upload files, generate token-based share links, and can **revoke access at any time**—recipients see a dead link immediately, even if they saved the URL.
 
+
 |                |                                                                                                                            |
 | -------------- | -------------------------------------------------------------------------------------------------------------------------- |
 | **Live demo**  | [https://secure-doc-delivery-saas.vercel.app](https://secure-doc-delivery-saas.vercel.app)                                 |
 | **Repository** | [https://github.com/ShuvaMallickPro/secure-doc-delivery-saas](https://github.com/ShuvaMallickPro/secure-doc-delivery-saas) |
+
 
 ---
 
@@ -23,17 +25,19 @@ This matches the Phase 1 MVP goal: Dropbox-style sharing with **post-send contro
 
 ## Features
 
+
 | Feature                                              | Status     |
 | ---------------------------------------------------- | ---------- |
-| User authentication (Clerk)                          | ✅         |
-| Document upload to S3 (presigned PUT)                | ✅         |
-| Sender dashboard & document list                     | ✅         |
-| Token-based share link generation                    | ✅         |
-| Recipient view page (preview + download)             | ✅         |
-| Instant revoke (soft revoke via `revokedAt`)         | ✅         |
-| Link expiry (`expiresAt` supported in schema + view) | ✅         |
+| User authentication (Clerk)                          | ✅          |
+| Document upload to S3 (presigned PUT)                | ✅          |
+| Sender dashboard & document list                     | ✅          |
+| Token-based share link generation                    | ✅          |
+| Recipient view page (preview + download)             | ✅          |
+| Instant revoke (soft revoke via `revokedAt`)         | ✅          |
+| Link expiry (`expiresAt` supported in schema + view) | ✅          |
 | Email notifications (Resend)                         | 🔲 Planned |
 | View analytics / audit log                           | 🔲 Planned |
+
 
 ---
 
@@ -59,6 +63,8 @@ flowchart TB
   end
 ```
 
+
+
 1. **Upload** — Server Action verifies Clerk `userId`, issues a short-lived presigned upload URL, browser uploads directly to S3, then metadata is saved in `Document`.
 2. **Share** — Owner creates a `ShareLink` with a random `token`; the app returns `https://your-app/view/{token}`.
 3. **View** — Recipient hits the public route; the server checks revoke/expiry, then issues a presigned download URL (private bucket safe).
@@ -67,6 +73,7 @@ flowchart TB
 ---
 
 ## Tech stack
+
 
 | Layer     | Technology                                                                 |
 | --------- | -------------------------------------------------------------------------- |
@@ -78,6 +85,7 @@ flowchart TB
 | ORM       | [Prisma 7](https://www.prisma.io) (`prisma-client` + `@prisma/adapter-pg`) |
 | Storage   | AWS S3 (`@aws-sdk/client-s3`, presigned URLs)                              |
 | Hosting   | [Vercel](https://vercel.com)                                               |
+
 
 ---
 
@@ -136,8 +144,8 @@ NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY=
 CLERK_SECRET_KEY=
 NEXT_PUBLIC_CLERK_SIGN_IN_URL=/login
 NEXT_PUBLIC_CLERK_SIGN_UP_URL=/signup
-NEXT_PUBLIC_CLERK_AFTER_SIGN_IN_URL=/dashboard
-NEXT_PUBLIC_CLERK_AFTER_SIGN_UP_URL=/dashboard
+NEXT_PUBLIC_CLERK_SIGN_IN_FALLBACK_REDIRECT_URL=/dashboard
+NEXT_PUBLIC_CLERK_SIGN_UP_FALLBACK_REDIRECT_URL=/dashboard
 
 # Database (Prisma CLI + runtime)
 DATABASE_URL="postgresql://..."
@@ -179,6 +187,7 @@ Open [http://localhost:3000](http://localhost:3000).
 
 ### Useful commands
 
+
 | Command                  | Description                          |
 | ------------------------ | ------------------------------------ |
 | `npm run dev`            | Start Next.js dev server             |
@@ -187,6 +196,7 @@ Open [http://localhost:3000](http://localhost:3000).
 | `npm run lint`           | ESLint                               |
 | `npx prisma studio`      | Browse database in UI                |
 | `npx prisma migrate dev` | Create/apply migrations              |
+
 
 ---
 

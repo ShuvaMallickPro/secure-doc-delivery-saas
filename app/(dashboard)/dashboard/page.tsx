@@ -5,7 +5,20 @@ import type { LucideIcon } from "lucide-react";
 import { FileText, Link2, ShieldOff } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { prisma } from "@/lib/prisma";
+import type { DocumentModel } from "@/generated/prisma/models/Document";
+import type { ShareLinkModel } from "@/generated/prisma/models/ShareLink";
 
+export const dynamic = "force-dynamic";
+
+type DocumentWithShares = DocumentModel & { shares: ShareLinkModel[] };
+
+type DashboardStats = {
+  documentCount: number;
+  activeShares: number;
+  revokedShares: number;
+  recentDocuments: DocumentWithShares[];
+  dbError: string | null;
+};
 function StatCard({
   title,
   value,
@@ -30,6 +43,51 @@ function StatCard({
   );
 }
 
+async function loadDashboardStats(userId: string): Promise<DashboardStats> {
+  try {
+    const [documentCount, activeShares, revokedShares, recentDocuments] =
+      await Promise.all([
+        prisma.document.count({ where: { ownerId: userId } }),
+        prisma.shareLink.count({
+          where: {
+            document: { ownerId: userId },
+            revokedAt: null,
+          },
+        }),
+        prisma.shareLink.count({
+          where: {
+            document: { ownerId: userId },
+            revokedAt: { not: null },
+          },
+        }),
+        prisma.document.findMany({
+          where: { ownerId: userId },
+          orderBy: { createdAt: "desc" },
+          take: 5,
+          include: { shares: { orderBy: { createdAt: "desc" } } },
+        }),
+      ]);
+
+    return {
+      documentCount,
+      activeShares,
+      revokedShares,
+      recentDocuments,
+      dbError: null,
+    };
+  } catch (error) {
+    console.error("Dashboard database error:", error);
+    return {
+      documentCount: 0,
+      activeShares: 0,
+      revokedShares: 0,
+      recentDocuments: [],
+      dbError:
+        "Could not reach the database. Check DATABASE_URL and try again in a moment.",
+    };
+  }
+}
+
 export default async function DashboardPage() {
   const { userId } = await auth();
   if (!userId) redirect("/login");
@@ -41,31 +99,16 @@ export default async function DashboardPage() {
     user?.emailAddresses[0]?.emailAddress ??
     "there";
 
-  const [documentCount, activeShares, revokedShares, recentDocuments] =
-    await Promise.all([
-      prisma.document.count({ where: { ownerId: userId } }),
-      prisma.shareLink.count({
-        where: {
-          document: { ownerId: userId },
-          revokedAt: null,
-        },
-      }),
-      prisma.shareLink.count({
-        where: {
-          document: { ownerId: userId },
-          revokedAt: { not: null },
-        },
-      }),
-      prisma.document.findMany({
-        where: { ownerId: userId },
-        orderBy: { createdAt: "desc" },
-        take: 5,
-        include: { shares: { orderBy: { createdAt: "desc" } } },
-      }),
-    ]);
+  const { documentCount, activeShares, revokedShares, recentDocuments, dbError } =
+    await loadDashboardStats(userId);
 
   return (
     <div className="space-y-8">
+      {dbError ? (
+        <div className="rounded-lg border border-destructive/30 bg-destructive/5 px-4 py-3 text-sm text-destructive">
+          {dbError}
+        </div>
+      ) : null}
       <div className="space-y-1">
         <h2 className="text-2xl font-bold tracking-tight md:text-3xl">
           Welcome back, {displayName}

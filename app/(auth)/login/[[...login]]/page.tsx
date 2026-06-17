@@ -1,7 +1,16 @@
+import { auth } from "@clerk/nextjs/server";
 import { SignIn } from "@clerk/nextjs";
 import Link from "next/link";
+import { redirect } from "next/navigation";
 
-export default function LoginPage() {
+export const dynamic = "force-dynamic";
+
+export default async function LoginPage() {
+  const { userId } = await auth();
+  if (userId) {
+    redirect("/dashboard");
+  }
+
   return (
     <div className="flex flex-col gap-6">
       <div className="text-center">
@@ -12,7 +21,12 @@ export default function LoginPage() {
           SecureDoc — access your dashboard
         </p>
       </div>
-      <SignIn routing="path" path="/login" signUpUrl="/signup" />
+      <SignIn
+        routing="path"
+        path="/login"
+        signUpUrl="/signup"
+        fallbackRedirectUrl="/dashboard"
+      />
       <p className="text-center text-sm text-muted-foreground">
         No account?{" "}
         <Link

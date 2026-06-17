@@ -3,6 +3,8 @@ import { redirect } from "next/navigation";
 import { DocumentList } from "@/components/documents/document-list";
 import { prisma } from "@/lib/prisma";
 
+export const dynamic = "force-dynamic";
+
 export default async function DocumentsPage() {
   const { userId } = await auth();
   if (!userId) redirect("/login");

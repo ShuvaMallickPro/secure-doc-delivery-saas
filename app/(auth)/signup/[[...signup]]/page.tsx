@@ -1,7 +1,16 @@
+import { auth } from "@clerk/nextjs/server";
 import { SignUp } from "@clerk/nextjs";
 import Link from "next/link";
+import { redirect } from "next/navigation";
 
-export default function SignupPage() {
+export const dynamic = "force-dynamic";
+
+export default async function SignupPage() {
+  const { userId } = await auth();
+  if (userId) {
+    redirect("/dashboard");
+  }
+
   return (
     <div className="flex flex-col gap-6">
       <div className="text-center">
@@ -12,7 +21,12 @@ export default function SignupPage() {
           SecureDoc — start sharing securely
         </p>
       </div>
-      <SignUp routing="path" path="/signup" signInUrl="/login" />
+      <SignUp
+        routing="path"
+        path="/signup"
+        signInUrl="/login"
+        fallbackRedirectUrl="/dashboard"
+      />
       <p className="text-center text-sm text-muted-foreground">
         Already have an account?{" "}
         <Link

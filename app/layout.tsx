@@ -30,6 +30,10 @@ export default function RootLayout({
 }>) {
   return (
     <ClerkProvider
+      signInUrl="/login"
+      signUpUrl="/signup"
+      signInFallbackRedirectUrl="/dashboard"
+      signUpFallbackRedirectUrl="/dashboard"
       appearance={{
         baseTheme: undefined,
         variables: {
@@ -39,7 +43,6 @@ export default function RootLayout({
         },
         elements: {
           card: "shadow-none border border-border",
-          // headerTitle: "hidden",
         },
       }}
     >
