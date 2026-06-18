@@ -8,7 +8,7 @@ export function MarketingHero({ signedIn }: { signedIn: boolean }) {
     <section className="relative overflow-hidden border-b border-border">
       <div
         aria-hidden
-        className="pointer-events-none absolute inset-0 bg-liner-to-b from-primary/5 to-transparent"
+        className="pointer-events-none absolute inset-0 bg-linear-to-b from-primary/5 to-transparent"
       />
       <div
         aria-hidden

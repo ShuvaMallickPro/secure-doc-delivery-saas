@@ -74,8 +74,8 @@ export default async function ViewPage({ params }: ViewPageProps) {
   return (
     <div className="min-h-screen bg-muted/40 p-6 md:p-8">
       <div className="mx-auto max-w-4xl">
-        <div className="mb-4 rounded-lg border border-amber-200 bg-amber-50 px-4 py-3 text-center dark:border-amber-900/50 dark:bg-amber-950/40">
-          <p className="text-sm font-medium text-amber-900 dark:text-amber-100">
+        <div className="mb-4 rounded-lg border border-border bg-muted px-4 py-3 text-center dark:border-amber-900/50 dark:bg-amber-950/40">
+          <p className="text-sm font-medium text-muted-foreground">
             Viewed by {link.recipientEmail} — {viewedAt}
           </p>
         </div>

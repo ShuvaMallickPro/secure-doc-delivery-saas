@@ -19,6 +19,7 @@ type DashboardStats = {
   recentDocuments: DocumentWithShares[];
   dbError: string | null;
 };
+
 function StatCard({
   title,
   value,
@@ -99,8 +100,13 @@ export default async function DashboardPage() {
     user?.emailAddresses[0]?.emailAddress ??
     "there";
 
-  const { documentCount, activeShares, revokedShares, recentDocuments, dbError } =
-    await loadDashboardStats(userId);
+  const {
+    documentCount,
+    activeShares,
+    revokedShares,
+    recentDocuments,
+    dbError,
+  } = await loadDashboardStats(userId);
 
   return (
     <div className="space-y-8">
