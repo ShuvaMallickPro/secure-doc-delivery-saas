@@ -46,5 +46,8 @@ export async function createDocument(formData: FormData) {
   });
 
   revalidatePath("/dashboard/documents");
-  return doc;
+  return {
+    id: doc.id,
+    name: doc.name,
+  };
 }

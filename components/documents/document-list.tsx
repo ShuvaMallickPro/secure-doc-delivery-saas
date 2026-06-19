@@ -42,6 +42,8 @@ export function DocumentList({
   } | null>(null);
 
   async function handleUpload(formData: FormData) {
+    // await createDocument(formData);
+    // window.location.reload();
     await createDocument(formData);
     window.location.reload();
   }
