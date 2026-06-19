@@ -7,15 +7,16 @@ import { AI_SUMMARY_STATUS } from "@/lib/ai-summary-status";
 import { runDocumentSummaryJob } from "@/lib/document-summary";
 import { getPublicUrl, getUploadUrl } from "@/lib/s3";
 import { prisma } from "@/lib/prisma";
+import { parseUploadFile, sanitizeFileName } from "@/lib/validators/documents";
 
 export async function createDocument(formData: FormData) {
   const { userId } = await auth();
   if (!userId) throw new Error("Unauthorized");
 
-  const file = formData.get("file") as File | null;
-  if (!file) throw new Error("No file provided");
+  const file = parseUploadFile(formData.get("file"));
+  const safeName = sanitizeFileName(file.name);
 
-  const key = `uploads/${userId}/${Date.now()}-${file.name}`;
+  const key = `uploads/${userId}/${Date.now()}-${safeName}`;
   const uploadUrl = await getUploadUrl(
     key,
     file.type || "application/octet-stream",
@@ -33,7 +34,7 @@ export async function createDocument(formData: FormData) {
 
   const doc = await prisma.document.create({
     data: {
-      name: file.name,
+      name: safeName,
       s3Key: key,
       s3Url: getPublicUrl(key),
       ownerId: userId,

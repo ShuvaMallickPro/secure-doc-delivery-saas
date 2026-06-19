@@ -3,10 +3,13 @@
 import { auth } from "@clerk/nextjs/server";
 import { revalidatePath } from "next/cache";
 import { prisma } from "@/lib/prisma";
+import { parseShareLinkId } from "@/lib/validators/documents";
 
-export async function revokeShareLink(shareLinkId: string) {
+export async function revokeShareLink(shareLinkIdRaw: string) {
   const { userId } = await auth();
   if (!userId) throw new Error("Unauthorized");
+
+  const shareLinkId = parseShareLinkId(shareLinkIdRaw);
 
   const link = await prisma.shareLink.findFirst({
     where: { id: shareLinkId },
