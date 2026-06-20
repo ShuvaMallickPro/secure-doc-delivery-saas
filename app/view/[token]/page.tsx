@@ -1,6 +1,7 @@
 import { getDownloadUrl } from "@/lib/s3";
 import { prisma } from "@/lib/prisma";
 import { DocumentAiSummary } from "@/components/documents/document-ai-summary";
+import { shareTokenSchema } from "@/lib/validators/share";
 
 type ViewPageProps = {
   params: Promise<{ token: string }>;
@@ -50,9 +51,15 @@ function UnavailableMessage({
 export default async function ViewPage({ params }: ViewPageProps) {
   const { token } = await params;
 
+  const parsed = shareTokenSchema.safeParse(token);
+  if (!parsed.success) {
+    return <UnavailableMessage reason="missing" />;
+  }
+
+  const safeToken = parsed.data;
+
   const link = await prisma.shareLink.findUnique({
-    where: { token },
-    include: { document: true },
+    where: { token: safeToken },
   });
 
   if (!link) {

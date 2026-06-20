@@ -1,6 +1,7 @@
 "use client";
 
-import { Fragment, useState } from "react";
+import { Fragment, useState, useTransition } from "react";
+import { useRouter } from "next/navigation";
 import { ChevronDown, ChevronRight } from "lucide-react";
 import { createDocument, generateDocumentSummary } from "@/actions/documents";
 import { AI_SUMMARY_STATUS } from "@/lib/ai-summary-status";
@@ -12,6 +13,8 @@ import { ShareLinkDialog } from "@/components/documents/share-link-dialog";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { getDocumentShareSummary } from "@/lib/share-utils";
+import { notifyError, notifySuccess } from "@/lib/toast";
+import { getUploadFileValidationError } from "@/lib/validators/documents";
 
 type DocumentWithShares = DocumentModel & { shares: ShareLinkModel[] };
 
@@ -35,17 +38,40 @@ export function DocumentList({
 }: {
   documents: DocumentWithShares[];
 }) {
+  const router = useRouter();
+  const [isUploadPending, startUploadTransition] = useTransition();
+  const [isRetryPending, startRetryTransition] = useTransition();
   const [expandedDocId, setExpandedDocId] = useState<string | null>(null);
   const [shareDialogDoc, setShareDialogDoc] = useState<{
     id: string;
     name: string;
   } | null>(null);
 
-  async function handleUpload(formData: FormData) {
-    // await createDocument(formData);
-    // window.location.reload();
-    await createDocument(formData);
-    window.location.reload();
+  async function handleUpload(event: React.SubmitEvent<HTMLFormElement>) {
+    event.preventDefault();
+    const form = event.currentTarget;
+    const formData = new FormData(form);
+    const file = formData.get("file");
+
+    const validationError = getUploadFileValidationError(file);
+    if (validationError) {
+      notifyError("Upload failed", validationError);
+      return;
+    }
+
+    try {
+      const result = await createDocument(formData);
+      form.reset();
+      notifySuccess(
+        "Document uploaded",
+        `${result.name} was uploaded successfully.`,
+      );
+      startUploadTransition(() => {
+        router.refresh();
+      });
+    } catch (error) {
+      notifyError("Upload failed", error);
+    }
   }
 
   function toggleExpanded(docId: string) {
@@ -53,24 +79,41 @@ export function DocumentList({
   }
 
   async function handleRetrySummary(documentId: string) {
-    await generateDocumentSummary(documentId);
-    window.location.reload();
+    try {
+      await generateDocumentSummary(documentId);
+      notifySuccess(
+        "AI summary started",
+        "We are generating a new summary for this document.",
+      );
+      startRetryTransition(() => {
+        router.refresh();
+      });
+    } catch (error) {
+      notifyError("AI summary failed", error);
+    }
   }
 
   return (
     <div className="space-y-6">
       <form
-        action={handleUpload}
+        onSubmit={handleUpload}
         className="rounded-xl border border-border bg-card p-6 shadow-sm"
       >
         <h2 className="mb-4 text-lg font-semibold">Upload Document</h2>
+        <p className="mb-4 text-sm text-muted-foreground">
+          PDF, TXT, or common images up to 10 MB.
+        </p>
         <input
           type="file"
           name="file"
           required
-          className="mb-4 block w-full text-sm file:mr-4 file:rounded-lg file:border-0 file:bg-primary file:px-4 file:py-2 file:text-sm file:font-medium file:text-primary-foreground"
+          accept=".pdf,.txt,.png,.jpg,.jpeg,.gif,.webp,application/pdf,text/plain,image/*"
+          disabled={isUploadPending}
+          className="mb-4 block w-full text-sm file:mr-4 file:rounded-lg file:border-0 file:bg-primary file:px-4 file:py-2 file:text-sm file:font-medium file:text-primary-foreground disabled:opacity-50"
         />
-        <Button type="submit">Upload</Button>
+        <Button type="submit" disabled={isUploadPending}>
+          {isUploadPending ? "Uploading…" : "Upload"}
+        </Button>
       </form>
 
       <div className="overflow-hidden rounded-xl border border-border bg-card shadow-sm">
@@ -192,9 +235,12 @@ export function DocumentList({
                                 type="button"
                                 variant="outline"
                                 size="sm"
+                                disabled={isRetryPending}
                                 onClick={() => handleRetrySummary(doc.id)}
                               >
-                                Retry AI summary
+                                {isRetryPending
+                                  ? "Retrying…"
+                                  : "Retry AI summary"}
                               </Button>
                             ) : null}
                             <DocumentSharesPanel shares={doc.shares} />
@@ -217,7 +263,11 @@ export function DocumentList({
         onOpenChange={(open) => {
           if (!open) setShareDialogDoc(null);
         }}
-        onCreated={() => {}}
+        onCreated={() => {
+          startUploadTransition(() => {
+            router.refresh();
+          });
+        }}
       />
     </div>
   );

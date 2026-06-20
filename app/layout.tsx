@@ -3,6 +3,7 @@ import { Geist, Geist_Mono, Inter } from "next/font/google";
 import { ClerkProvider } from "@clerk/nextjs";
 import "./globals.css";
 import { Agentation } from "agentation";
+import { Toaster } from "@/components/ui/sonner";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -48,7 +49,10 @@ export default function RootLayout({
       }}
     >
       <html lang="en" className={`${inter.variable}  h-full antialiased`}>
-        <body className="min-h-full flex flex-col font-sans">{children}</body>
+        <body className="min-h-full flex flex-col font-sans">
+          {children}
+          <Toaster />
+        </body>
         <Agentation />
       </html>
     </ClerkProvider>

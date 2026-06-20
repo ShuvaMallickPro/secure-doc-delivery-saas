@@ -31,6 +31,38 @@ export const ALLOWED_UPLOAD_MIME_TYPES = [
   "image/webp",
 ] as const;
 
+export const ALLOWED_UPLOAD_EXTENSIONS = [
+  "pdf",
+  "txt",
+  "png",
+  "jpg",
+  "jpeg",
+  "gif",
+  "webp",
+] as const;
+
+const BLOCKED_UPLOAD_EXTENSIONS = new Set([
+  "exe",
+  "zip",
+  "rar",
+  "7z",
+  "tar",
+  "gz",
+  "bz2",
+  "msi",
+  "bat",
+  "cmd",
+  "sh",
+  "dll",
+  "js",
+  "html",
+  "htm",
+]);
+
+function getFileExtension(name: string): string {
+  return name.split(".").pop()?.toLowerCase() ?? "";
+}
+
 const uploadFileSchema = z
   .custom<File>((value) => value instanceof File, "No file provided")
   .refine((file) => file.size > 0, "File is empty")
@@ -39,10 +71,20 @@ const uploadFileSchema = z
     `File must be ${MAX_UPLOAD_BYTES / (1024 * 1024)} MB or smaller`,
   )
   .refine(
-    (file) =>
-      ALLOWED_UPLOAD_MIME_TYPES.includes(
+    (file) => !BLOCKED_UPLOAD_EXTENSIONS.has(getFileExtension(file.name)),
+    "File type not allowed. Use PDF, TXT, or common image formats.",
+  )
+  .refine(
+    (file) => {
+      const ext = getFileExtension(file.name);
+      const mimeAllowed = ALLOWED_UPLOAD_MIME_TYPES.includes(
         file.type as (typeof ALLOWED_UPLOAD_MIME_TYPES)[number],
-      ),
+      );
+      const extAllowed = ALLOWED_UPLOAD_EXTENSIONS.includes(
+        ext as (typeof ALLOWED_UPLOAD_EXTENSIONS)[number],
+      );
+      return mimeAllowed || extAllowed;
+    },
     "File type not allowed. Use PDF, TXT, or common image formats.",
   );
 
@@ -85,6 +127,15 @@ export function parseUploadFile(raw: unknown): File {
     throw new Error(formatZodError(result.error));
   }
   return result.data;
+}
+
+/** Client-safe validation — returns an error message or null if valid. */
+export function getUploadFileValidationError(raw: unknown): string | null {
+  const result = uploadFileSchema.safeParse(raw);
+  if (!result.success) {
+    return formatZodError(result.error);
+  }
+  return null;
 }
 
 /** Sanitize filename for S3 keys and DB display. */

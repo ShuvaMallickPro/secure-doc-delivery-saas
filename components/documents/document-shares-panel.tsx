@@ -1,11 +1,13 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useTransition } from "react";
+import { useRouter } from "next/navigation";
 import { restoreShareLink, revokeShareLink } from "@/actions/documents";
 import type { ShareLinkModel } from "@/generated/prisma/models/ShareLink";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { getShareStatus } from "@/lib/share-utils";
+import { notifyError, notifySuccess } from "@/lib/toast";
 
 function getClientShareUrl(token: string) {
   const base =
@@ -30,30 +32,56 @@ function ShareStatusBadge({ share }: { share: ShareLinkModel }) {
 }
 
 export function DocumentSharesPanel({ shares }: { shares: ShareLinkModel[] }) {
+  const router = useRouter();
   const [pendingId, setPendingId] = useState<string | null>(null);
+  const [, startTransition] = useTransition();
 
-  async function handleRevoke(shareId: string) {
+  async function handleRevoke(shareId: string, recipientEmail: string) {
     setPendingId(shareId);
     try {
       await revokeShareLink(shareId);
-      window.location.reload();
+      notifySuccess(
+        "Access revoked",
+        `The link for ${recipientEmail} no longer works.`,
+      );
+      startTransition(() => {
+        router.refresh();
+      });
+    } catch (error) {
+      notifyError("Could not revoke link", error);
     } finally {
       setPendingId(null);
     }
   }
 
-  async function handleRestore(shareId: string) {
+  async function handleRestore(shareId: string, recipientEmail: string) {
     setPendingId(shareId);
     try {
       await restoreShareLink(shareId);
-      window.location.reload();
+      notifySuccess(
+        "Access restored",
+        `The link for ${recipientEmail} is active again.`,
+      );
+      startTransition(() => {
+        router.refresh();
+      });
+    } catch (error) {
+      notifyError("Could not restore link", error);
     } finally {
       setPendingId(null);
     }
   }
 
   async function handleCopy(token: string) {
-    await navigator.clipboard.writeText(getClientShareUrl(token));
+    try {
+      await navigator.clipboard.writeText(getClientShareUrl(token));
+      notifySuccess("Link copied", "The share link is on your clipboard.");
+    } catch {
+      notifyError(
+        "Copy failed",
+        "Could not copy the link. Please copy it manually.",
+      );
+    }
   }
 
   if (shares.length === 0) {
@@ -118,7 +146,9 @@ export function DocumentSharesPanel({ shares }: { shares: ShareLinkModel[] }) {
                       size="sm"
                       className="h-8 text-destructive hover:text-destructive"
                       disabled={isPending}
-                      onClick={() => handleRevoke(share.id)}
+                      onClick={() =>
+                        handleRevoke(share.id, share.recipientEmail)
+                      }
                     >
                       Revoke
                     </Button>
@@ -129,7 +159,9 @@ export function DocumentSharesPanel({ shares }: { shares: ShareLinkModel[] }) {
                       size="sm"
                       className="h-8"
                       disabled={isPending}
-                      onClick={() => handleRestore(share.id)}
+                      onClick={() =>
+                        handleRestore(share.id, share.recipientEmail)
+                      }
                     >
                       Restore
                     </Button>

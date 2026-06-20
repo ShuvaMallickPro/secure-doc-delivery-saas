@@ -1,6 +1,7 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useTransition } from "react";
+import { useRouter } from "next/navigation";
 import { Trash } from "lucide-react";
 import { deleteDocument } from "@/actions/documents";
 import {
@@ -15,6 +16,7 @@ import {
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
 import { Button } from "@/components/ui/button";
+import { notifyError, notifySuccess } from "@/lib/toast";
 
 export function DeleteDocumentDialog({
   documentId,
@@ -23,21 +25,25 @@ export function DeleteDocumentDialog({
   documentId: string;
   documentName: string;
 }) {
+  const router = useRouter();
   const [open, setOpen] = useState(false);
   const [pending, setPending] = useState(false);
-  const [error, setError] = useState("");
+  const [, startTransition] = useTransition();
 
   async function handleDelete() {
     setPending(true);
-    setError("");
     try {
       await deleteDocument(documentId);
       setOpen(false);
-      window.location.reload();
-    } catch (err) {
-      setError(
-        err instanceof Error ? err.message : "Failed to delete document",
+      notifySuccess(
+        "Document deleted",
+        `${documentName} was removed permanently.`,
       );
+      startTransition(() => {
+        router.refresh();
+      });
+    } catch (error) {
+      notifyError("Delete failed", error);
       setPending(false);
     }
   }
@@ -63,7 +69,6 @@ export function DeleteDocumentDialog({
             storage and remove all share links. This action cannot be undone.
           </AlertDialogDescription>
         </AlertDialogHeader>
-        {error ? <p className="text-sm text-destructive">{error}</p> : null}
         <AlertDialogFooter>
           <AlertDialogCancel disabled={pending} className="cursor-pointer">
             Cancel

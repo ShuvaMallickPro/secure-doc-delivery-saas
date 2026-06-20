@@ -13,6 +13,7 @@ import {
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { notifyError, notifySuccess } from "@/lib/toast";
 
 type ShareLinkDialogProps = {
   documentId: string | null;
@@ -30,13 +31,11 @@ export function ShareLinkDialog({
   onCreated,
 }: ShareLinkDialogProps) {
   const [email, setEmail] = useState("");
-  const [error, setError] = useState("");
   const [pending, setPending] = useState(false);
   const [createdUrl, setCreatedUrl] = useState("");
 
   function reset() {
     setEmail("");
-    setError("");
     setCreatedUrl("");
     setPending(false);
   }
@@ -46,19 +45,22 @@ export function ShareLinkDialog({
     onOpenChange(next);
   }
 
-  async function handleSubmit(e: React.FormEvent) {
+  async function handleSubmit(e: React.SubmitEvent<HTMLFormElement>) {
     e.preventDefault();
     if (!documentId) return;
 
     setPending(true);
-    setError("");
 
     try {
       const result = await createShareLink(documentId, email);
       setCreatedUrl(result.shareUrl);
       onCreated(result.shareUrl);
-    } catch (err) {
-      setError(err instanceof Error ? err.message : "Failed to create link");
+      notifySuccess(
+        "Share link created",
+        `A secure link was created for ${email.trim()}.`,
+      );
+    } catch (error) {
+      notifyError("Could not create link", error);
     } finally {
       setPending(false);
     }
@@ -66,7 +68,15 @@ export function ShareLinkDialog({
 
   async function copyUrl() {
     if (!createdUrl) return;
-    await navigator.clipboard.writeText(createdUrl);
+    try {
+      await navigator.clipboard.writeText(createdUrl);
+      notifySuccess("Link copied", "The share link is on your clipboard.");
+    } catch {
+      notifyError(
+        "Copy failed",
+        "Could not copy the link. Please copy it manually.",
+      );
+    }
   }
 
   return (
@@ -93,13 +103,7 @@ export function ShareLinkDialog({
               <Button type="button" variant="outline" onClick={copyUrl}>
                 Copy link
               </Button>
-              <Button
-                type="button"
-                onClick={() => {
-                  handleOpenChange(false);
-                  window.location.reload();
-                }}
-              >
+              <Button type="button" onClick={() => handleOpenChange(false)}>
                 Done
               </Button>
             </DialogFooter>
@@ -118,7 +122,6 @@ export function ShareLinkDialog({
                 disabled={pending}
               />
             </div>
-            {error ? <p className="text-sm text-destructive">{error}</p> : null}
             <DialogFooter>
               <Button
                 type="button"
