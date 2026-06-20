@@ -3,6 +3,7 @@ import "server-only";
 import { PrismaPg } from "@prisma/adapter-pg";
 import { Pool } from "pg";
 import { PrismaClient } from "@/generated/prisma/client";
+import { env } from "@/lib/env";
 
 const globalForPrisma = globalThis as unknown as {
   prisma: PrismaClient | undefined;
@@ -11,7 +12,7 @@ const globalForPrisma = globalThis as unknown as {
 
 /** Runtime connection string for the pg driver (pooled Prisma Postgres URL). */
 function getConnectionString() {
-  const url = process.env.DATABASE_URL;
+  const url = env.DATABASE_URL;
   if (!url) return url;
 
   // pg driver works reliably with sslmode=require for Prisma Postgres.

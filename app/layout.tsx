@@ -20,9 +20,33 @@ const inter = Inter({
   variable: "--font-sans",
 });
 
+const appUrl =
+  process.env.NEXT_PUBLIC_APP_URL?.replace(/\/$/, "") ??
+  "http://localhost:3000";
+
 export const metadata: Metadata = {
-  title: "SecureDoc — Secure document delivery",
-  description: "Upload, share, and revoke access to sensitive documents.",
+  metadataBase: new URL(appUrl),
+  title: {
+    default: "SecureDoc — Secure document delivery",
+    template: "%s | SecureDoc",
+  },
+  description:
+    "Upload, share, and revoke access to sensitive documents. Each recipient gets a unique link you can disable at any time.",
+  applicationName: "SecureDoc",
+  openGraph: {
+    type: "website",
+    locale: "en_US",
+    siteName: "SecureDoc",
+    title: "SecureDoc — Secure document delivery",
+    description:
+      "Upload, share, and revoke access to sensitive documents with per-recipient links.",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "SecureDoc — Secure document delivery",
+    description:
+      "Upload, share, and revoke access to sensitive documents with per-recipient links.",
+  },
 };
 
 export default function RootLayout({

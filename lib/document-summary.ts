@@ -3,6 +3,7 @@ import "server-only";
 import OpenAI from "openai";
 import { revalidatePath } from "next/cache";
 import { AI_SUMMARY_STATUS } from "@/lib/ai-summary-status";
+import { env } from "@/lib/env";
 import { getObjectBuffer } from "@/lib/s3";
 import { prisma } from "@/lib/prisma";
 
@@ -36,7 +37,7 @@ async function extractTextFromBuffer(
 }
 
 async function summarizeText(documentName: string, text: string) {
-  const apiKey = process.env.OPENAI_API_KEY;
+  const apiKey = env.OPENAI_API_KEY;
   if (!apiKey) {
     throw new Error("OPENAI_API_KEY is not configured");
   }
@@ -45,7 +46,7 @@ async function summarizeText(documentName: string, text: string) {
   const clipped = text.slice(0, MAX_TEXT_CHARS);
 
   const response = await openai.chat.completions.create({
-    model: process.env.OPENAI_MODEL ?? "gpt-4o-mini",
+    model: env.OPENAI_MODEL ?? "gpt-4o-mini",
     temperature: 0.3,
     messages: [
       {

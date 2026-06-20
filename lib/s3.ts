@@ -7,18 +7,19 @@ import {
   S3Client,
 } from "@aws-sdk/client-s3";
 import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
+import { env } from "@/lib/env";
 
 const s3Client = new S3Client({
-  region: process.env.AWS_REGION!,
+  region: env.AWS_REGION,
   credentials: {
-    accessKeyId: process.env.AWS_ACCESS_KEY_ID!,
-    secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY!,
+    accessKeyId: env.AWS_ACCESS_KEY_ID,
+    secretAccessKey: env.AWS_SECRET_ACCESS_KEY,
   },
 });
 
 export async function getUploadUrl(key: string, contentType: string) {
   const command = new PutObjectCommand({
-    Bucket: process.env.AWS_S3_BUCKET_NAME!,
+    Bucket: env.AWS_S3_BUCKET_NAME,
     Key: key,
     ContentType: contentType,
   });
@@ -27,12 +28,12 @@ export async function getUploadUrl(key: string, contentType: string) {
 }
 
 export function getPublicUrl(key: string) {
-  return `https://${process.env.AWS_S3_BUCKET_NAME}.s3.${process.env.AWS_REGION}.amazonaws.com/${key}`;
+  return `https://${env.AWS_S3_BUCKET_NAME}.s3.${env.AWS_REGION}.amazonaws.com/${key}`;
 }
 
 export async function getDownloadUrl(key: string) {
   const command = new GetObjectCommand({
-    Bucket: process.env.AWS_S3_BUCKET_NAME!,
+    Bucket: env.AWS_S3_BUCKET_NAME,
     Key: key,
   });
 
@@ -41,7 +42,7 @@ export async function getDownloadUrl(key: string) {
 
 export async function getObjectBuffer(key: string): Promise<Buffer> {
   const command = new GetObjectCommand({
-    Bucket: process.env.AWS_S3_BUCKET_NAME!,
+    Bucket: env.AWS_S3_BUCKET_NAME,
     Key: key,
   });
 
@@ -57,7 +58,7 @@ export async function getObjectBuffer(key: string): Promise<Buffer> {
 export async function deleteObject(key: string) {
   await s3Client.send(
     new DeleteObjectCommand({
-      Bucket: process.env.AWS_S3_BUCKET_NAME!,
+      Bucket: env.AWS_S3_BUCKET_NAME,
       Key: key,
     }),
   );

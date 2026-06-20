@@ -1,7 +1,19 @@
+import type { Metadata } from "next";
 import { auth } from "@clerk/nextjs/server";
 import { MarketingCta } from "@/components/marketing/marketing-cta";
 
 export const dynamic = "force-dynamic";
+
+export const metadata: Metadata = {
+  title: "Secure document delivery for teams",
+  description:
+    "Share contracts and sensitive files with revocable links. Know who has access and cut it off instantly.",
+  openGraph: {
+    title: "SecureDoc — Secure document delivery for teams",
+    description:
+      "Share contracts and sensitive files with revocable links. Know who has access and cut it off instantly.",
+  },
+};
 import { MarketingFeatures } from "@/components/marketing/marketing-features";
 import { MarketingFlowStrip } from "@/components/marketing/marketing-flow-strip";
 import { MarketingFooter } from "@/components/marketing/marketing-footer";
