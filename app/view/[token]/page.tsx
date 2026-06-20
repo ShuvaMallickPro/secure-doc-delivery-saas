@@ -1,5 +1,5 @@
 import { getDownloadUrl } from "@/lib/s3";
-import { prisma } from "@/lib/prisma";
+import { getShareLinkByToken } from "@/lib/data/share-links";
 import { DocumentAiSummary } from "@/components/documents/document-ai-summary";
 import { shareTokenSchema } from "@/lib/validators/share";
 
@@ -56,11 +56,7 @@ export default async function ViewPage({ params }: ViewPageProps) {
     return <UnavailableMessage reason="missing" />;
   }
 
-  const safeToken = parsed.data;
-
-  const link = await prisma.shareLink.findUnique({
-    where: { token: safeToken },
-  });
+  const link = await getShareLinkByToken(parsed.data);
 
   if (!link) {
     return <UnavailableMessage reason="missing" />;
@@ -81,7 +77,7 @@ export default async function ViewPage({ params }: ViewPageProps) {
   return (
     <div className="min-h-screen bg-muted/40 p-6 md:p-8">
       <div className="mx-auto max-w-4xl">
-        <div className="mb-4 rounded-lg border border-border bg-muted px-4 py-3 text-center dark:border-amber-900/50 dark:bg-amber-950/40">
+        <div className="mb-4 rounded-lg border border-border bg-muted px-4 py-3 text-center">
           <p className="text-sm font-medium text-muted-foreground">
             Viewed by {link.recipientEmail} — {viewedAt}
           </p>

@@ -2,8 +2,11 @@
 
 import { auth } from "@clerk/nextjs/server";
 import { revalidatePath } from "next/cache";
+import {
+  deleteDocumentById,
+  getDocumentForUser,
+} from "@/lib/data/documents";
 import { deleteObject } from "@/lib/s3";
-import { prisma } from "@/lib/prisma";
 import { parseDocumentId } from "@/lib/validators/documents";
 
 export async function deleteDocument(documentIdRaw: string) {
@@ -12,16 +15,11 @@ export async function deleteDocument(documentIdRaw: string) {
 
   const documentId = parseDocumentId(documentIdRaw);
 
-  const doc = await prisma.document.findFirst({
-    where: { id: documentId, ownerId: userId },
-  });
+  const doc = await getDocumentForUser(userId, documentId);
   if (!doc) throw new Error("Document not found");
 
   await deleteObject(doc.s3Key);
-
-  await prisma.document.delete({
-    where: { id: documentId },
-  });
+  await deleteDocumentById(documentId);
 
   revalidatePath("/dashboard/documents");
   revalidatePath("/dashboard");

@@ -2,7 +2,10 @@
 
 import { auth } from "@clerk/nextjs/server";
 import { revalidatePath } from "next/cache";
-import { prisma } from "@/lib/prisma";
+import {
+  getShareLinkForOwner,
+  setShareLinkRevokedAt,
+} from "@/lib/data/share-links";
 import { parseShareLinkId } from "@/lib/validators/documents";
 
 export async function revokeShareLink(shareLinkIdRaw: string) {
@@ -11,19 +14,10 @@ export async function revokeShareLink(shareLinkIdRaw: string) {
 
   const shareLinkId = parseShareLinkId(shareLinkIdRaw);
 
-  const link = await prisma.shareLink.findFirst({
-    where: { id: shareLinkId },
-    include: { document: true },
-  });
+  const link = await getShareLinkForOwner(shareLinkId, userId);
+  if (!link) throw new Error("Not authorized to revoke this link");
 
-  if (!link || link.document.ownerId !== userId) {
-    throw new Error("Not authorized to revoke this link");
-  }
-
-  await prisma.shareLink.update({
-    where: { id: shareLinkId },
-    data: { revokedAt: new Date() },
-  });
+  await setShareLinkRevokedAt(shareLinkId, new Date());
 
   revalidatePath("/dashboard/documents");
 }

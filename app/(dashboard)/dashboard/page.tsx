@@ -4,7 +4,7 @@ import { redirect } from "next/navigation";
 import type { LucideIcon } from "lucide-react";
 import { FileText, Link2, ShieldOff } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { prisma } from "@/lib/prisma";
+import { getDashboardStatsForUser } from "@/lib/data/documents";
 import type { DocumentModel } from "@/generated/prisma/models/Document";
 import type { ShareLinkModel } from "@/generated/prisma/models/ShareLink";
 
@@ -46,34 +46,10 @@ function StatCard({
 
 async function loadDashboardStats(userId: string): Promise<DashboardStats> {
   try {
-    const [documentCount, activeShares, revokedShares, recentDocuments] =
-      await Promise.all([
-        prisma.document.count({ where: { ownerId: userId } }),
-        prisma.shareLink.count({
-          where: {
-            document: { ownerId: userId },
-            revokedAt: null,
-          },
-        }),
-        prisma.shareLink.count({
-          where: {
-            document: { ownerId: userId },
-            revokedAt: { not: null },
-          },
-        }),
-        prisma.document.findMany({
-          where: { ownerId: userId },
-          orderBy: { createdAt: "desc" },
-          take: 5,
-          include: { shares: { orderBy: { createdAt: "desc" } } },
-        }),
-      ]);
+    const stats = await getDashboardStatsForUser(userId);
 
     return {
-      documentCount,
-      activeShares,
-      revokedShares,
-      recentDocuments,
+      ...stats,
       dbError: null,
     };
   } catch (error) {

@@ -1,7 +1,8 @@
 "use server";
 
 import { auth } from "@clerk/nextjs/server";
-import { prisma } from "@/lib/prisma";
+import { getDocumentForUser } from "@/lib/data/documents";
+import { createShareLinkRecord } from "@/lib/data/share-links";
 import {
   parseDocumentId,
   parseRecipientEmail,
@@ -17,17 +18,10 @@ export async function createShareLink(
   const documentId = parseDocumentId(documentIdRaw);
   const email = parseRecipientEmail(recipientEmailRaw);
 
-  const doc = await prisma.document.findFirst({
-    where: { id: documentId, ownerId: userId },
-  });
+  const doc = await getDocumentForUser(userId, documentId);
   if (!doc) throw new Error("Document not found");
 
-  const link = await prisma.shareLink.create({
-    data: {
-      documentId,
-      recipientEmail: email,
-    },
-  });
+  const link = await createShareLinkRecord(documentId, email);
 
   const { buildShareUrl } = await import("@/lib/share-utils");
 
