@@ -21,17 +21,19 @@ export function DashboardHeader() {
         </h1>
       </div>
 
-      <div className="relative hidden min-w-0 max-w-sm flex-1 md:block lg:max-w-md">
-        <Search className="pointer-events-none absolute top-1/2 left-3 size-4 -translate-y-1/2 text-muted-foreground" />
-        <Input
-          type="search"
-          placeholder="Search documents..."
-          className="h-9 w-full rounded-full border-border bg-muted/50 pl-9 shadow-none focus-visible:ring-primary/30"
-          aria-label="Search documents"
-        />
+      <div className="pointer-events-none absolute left-1/2 hidden w-full max-w-sm -translate-x-1/2 px-4 md:block lg:max-w-md">
+        <div className="relative pointer-events-auto">
+          <Search className="pointer-events-none absolute top-1/2 left-3 size-4 -translate-y-1/2 text-muted-foreground" />
+          <Input
+            type="search"
+            placeholder="Search documents..."
+            className="h-9 w-full rounded-full border-border bg-muted/50 pl-9 shadow-none focus-visible:ring-primary/30"
+            aria-label="Search documents"
+          />
+        </div>
       </div>
 
-      <div className="ml-auto flex shrink-0 items-center gap-1 md:gap-2">
+      <div className="flex flex-1 shrink-0 items-center justify-end gap-1 md:gap-2">
         <Button
           type="button"
           variant="ghost"
@@ -46,7 +48,7 @@ export function DashboardHeader() {
           <UserButton
             appearance={{
               elements: {
-                avatarBox: "h-9 w-9 shrink-0 ",
+                avatarBox: "h-9 w-9 shrink-0",
                 userButtonTrigger: "h-9 w-9 shrink-0 focus:shadow-none",
               },
             }}

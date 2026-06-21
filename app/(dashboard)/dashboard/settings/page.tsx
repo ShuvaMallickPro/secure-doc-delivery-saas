@@ -8,6 +8,7 @@ export default async function SettingsPage() {
 
   return (
     <PageHeader
+      headingSize="section"
       title="Settings"
       description="Account and workspace settings will be available here soon."
     />
