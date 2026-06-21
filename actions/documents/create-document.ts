@@ -7,10 +7,7 @@ import { createDocumentRecord } from "@/lib/data/documents";
 import { AI_SUMMARY_STATUS } from "@/lib/ai-summary-status";
 import { runDocumentSummaryJob } from "@/lib/document-summary";
 import { getPublicUrl, getUploadUrl } from "@/lib/s3";
-import {
-  parseUploadFile,
-  sanitizeFileName,
-} from "@/lib/validators/documents";
+import { parseUploadFile, sanitizeFileName } from "@/lib/validators/documents";
 
 export async function createDocument(formData: FormData) {
   const { userId } = await auth();

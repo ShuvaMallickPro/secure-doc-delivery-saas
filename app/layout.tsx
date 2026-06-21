@@ -4,6 +4,7 @@ import { ClerkProvider } from "@clerk/nextjs";
 import "./globals.css";
 import { Agentation } from "agentation";
 import { Toaster } from "@/components/ui/sonner";
+import { clerkAppearance } from "@/lib/clerk-appearance";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -60,17 +61,7 @@ export default function RootLayout({
       signUpUrl="/signup"
       signInFallbackRedirectUrl="/dashboard"
       signUpFallbackRedirectUrl="/dashboard"
-      appearance={{
-        baseTheme: undefined,
-        variables: {
-          colorPrimary: "hsl(var(--primary))",
-          colorBackground: "hsl(var(--background))",
-          borderRadius: "0.5rem",
-        },
-        elements: {
-          card: "shadow-none border border-border",
-        },
-      }}
+      appearance={clerkAppearance}
     >
       <html lang="en" className={`${inter.variable}  h-full antialiased`}>
         <body className="min-h-full flex flex-col font-sans">

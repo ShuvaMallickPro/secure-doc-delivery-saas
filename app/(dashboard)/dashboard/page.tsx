@@ -4,6 +4,7 @@ import { redirect } from "next/navigation";
 import type { LucideIcon } from "lucide-react";
 import { FileText, Link2, ShieldOff } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { PageHeader } from "@/components/dashboard/page-header";
 import { getDashboardStatsForUser } from "@/lib/data/documents";
 import type { DocumentModel } from "@/generated/prisma/models/Document";
 import type { ShareLinkModel } from "@/generated/prisma/models/ShareLink";
@@ -91,15 +92,11 @@ export default async function DashboardPage() {
           {dbError}
         </div>
       ) : null}
-      <div className="space-y-1">
-        <h2 className="text-2xl font-bold tracking-tight md:text-3xl">
-          Welcome back, {displayName}
-        </h2>
-        <p className="max-w-2xl text-muted-foreground">
-          Upload documents and share them with revocable links. Use the sidebar
-          to open Documents when you are ready.
-        </p>
-      </div>
+      <PageHeader
+        headingSize="section"
+        title={`Welcome back, ${displayName}`}
+        description="Upload documents and share them with revocable links. Use the sidebar to open Documents when you are ready."
+      />
 
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
         <StatCard
@@ -147,9 +144,9 @@ export default async function DashboardPage() {
                   key={doc.id}
                   className="flex items-center justify-between gap-4 px-6 py-4 transition-colors hover:bg-muted/40"
                 >
-                  <div className="min-w-0">
-                    <p className="truncate font-medium">{doc.name}</p>
-                    <p className="text-sm text-muted-foreground">
+                  <div className="min-w-0 space-y-1.5">
+                    <p className="truncate text-sm font-medium">{doc.name}</p>
+                    <p className="text-xs text-muted-foreground">
                       {new Date(doc.createdAt).toLocaleString(undefined, {
                         dateStyle: "medium",
                         timeStyle: "short",

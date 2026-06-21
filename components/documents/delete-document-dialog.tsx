@@ -55,7 +55,7 @@ export function DeleteDocumentDialog({
           type="button"
           variant="ghost"
           size="icon"
-          className="size-8 text-muted-foreground hover:text-destructive cursor-pointer"
+          className="size-8 text-muted-foreground hover:text-destructive"
           aria-label={`Delete ${documentName}`}
         >
           <Trash className="size-4 " />
@@ -70,12 +70,10 @@ export function DeleteDocumentDialog({
           </AlertDialogDescription>
         </AlertDialogHeader>
         <AlertDialogFooter>
-          <AlertDialogCancel disabled={pending} className="cursor-pointer">
-            Cancel
-          </AlertDialogCancel>
+          <AlertDialogCancel disabled={pending}>Cancel</AlertDialogCancel>
           <AlertDialogAction
             disabled={pending}
-            className="bg-destructive text-white hover:bg-destructive/90 cursor-pointer"
+            className="bg-destructive text-white hover:bg-destructive/90"
             onClick={(e) => {
               e.preventDefault();
               void handleDelete();

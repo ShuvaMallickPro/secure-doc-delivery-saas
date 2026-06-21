@@ -99,7 +99,7 @@ export function DocumentList({
         onSubmit={handleUpload}
         className="rounded-xl border border-border bg-card p-6 shadow-sm"
       >
-        <h2 className="mb-4 text-lg font-semibold">Upload Document</h2>
+        <h2 className="mb-1 text-lg font-semibold">Upload Document</h2>
         <p className="mb-4 text-sm text-muted-foreground">
           PDF, TXT, or common images up to 10 MB.
         </p>
@@ -109,7 +109,7 @@ export function DocumentList({
           required
           accept=".pdf,.txt,.png,.jpg,.jpeg,.gif,.webp,application/pdf,text/plain,image/*"
           disabled={isUploadPending}
-          className="mb-4 block w-full text-sm file:mr-4 file:rounded-lg file:border-0 file:bg-primary file:px-4 file:py-2 file:text-sm file:font-medium file:text-primary-foreground disabled:opacity-50"
+          className="mb-4 block w-full text-sm file:mr-4 file:rounded-lg file:border-0 file:bg-primary file:px-4 file:py-2 file:text-sm file:font-medium file:text-primary-foreground disabled:opacity-50 cursor-pointer"
         />
         <Button type="submit" disabled={isUploadPending}>
           {isUploadPending ? "Uploading…" : "Upload"}
@@ -154,8 +154,8 @@ export function DocumentList({
                   <Fragment key={doc.id}>
                     <tr className="hover:bg-muted/30">
                       <td className="px-6 py-4 text-sm font-medium">
-                        <div className="space-y-1">
-                          <p>{doc.name}</p>
+                        <div className="space-y-1.5">
+                          <p className="text-sm font-medium">{doc.name}</p>
                           {aiBadge ? (
                             <Badge
                               variant={aiBadge.variant}

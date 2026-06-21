@@ -1,7 +1,16 @@
 import type { NextConfig } from "next";
 
-const clerkDomain = "https://*.clerk.accounts.dev https://*.clerk.com";
+/**
+ * Clerk FAPI hosts clerk.browser.js — must appear in script-src.
+ * @see https://clerk.com/docs/guides/secure/best-practices/csp-headers
+ */
+const clerkScriptSrc =
+  "https://*.clerk.accounts.dev https://*.clerk.com https://challenges.cloudflare.com";
+const clerkConnectSrc =
+  "https://*.clerk.accounts.dev https://*.clerk.com https://clerk-telemetry.com https://*.clerk-telemetry.com https://challenges.cloudflare.com";
 const awsDomain = "https://*.amazonaws.com";
+
+const isDev = process.env.NODE_ENV === "development";
 
 const contentSecurityPolicy = [
   "default-src 'self'",
@@ -9,11 +18,12 @@ const contentSecurityPolicy = [
   "form-action 'self'",
   "frame-ancestors 'none'",
   "object-src 'none'",
-  "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://challenges.cloudflare.com",
-  `connect-src 'self' ${clerkDomain} ${awsDomain} https://challenges.cloudflare.com`,
-  `img-src 'self' data: blob: ${clerkDomain} ${awsDomain}`,
+  // Clerk loads clerk.browser.js from your FAPI hostname (e.g. *.clerk.accounts.dev).
+  `script-src 'self' 'unsafe-inline'${isDev ? " 'unsafe-eval'" : ""} ${clerkScriptSrc}`,
+  `connect-src 'self' ${clerkConnectSrc} ${awsDomain}`,
+  `img-src 'self' data: blob: https://img.clerk.com ${awsDomain}`,
   "style-src 'self' 'unsafe-inline'",
-  `frame-src 'self' ${clerkDomain} https://challenges.cloudflare.com`,
+  `frame-src 'self' ${clerkScriptSrc}`,
   "font-src 'self' data:",
   "worker-src 'self' blob:",
 ].join("; ");
