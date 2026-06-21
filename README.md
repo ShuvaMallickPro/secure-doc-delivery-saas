@@ -312,6 +312,91 @@ For production, consider: rate limiting on `/view/[token]`, audit logs, verified
 
 ---
 
+## Building this — struggles, face-plants, and what actually fixed them
+
+I built SecureDoc as a **3-day portfolio sprint** with AI helping me move fast. The happy path (upload → share → view → revoke) came together quickly. The *real* learning happened when things broke in ways the tutorials never mention.
+
+If you're reading this because something looks familiar — same. Here's my honest trail.
+
+### "I can see it working, but I don't fully understand it yet"
+
+That was me after day one. The app ran. Clerk logged me in. Files uploaded. But if you asked *why* presigned URLs exist or *where* ownership is checked, I'd have paused.
+
+**What helped:** I stopped trying to memorize every file and started tracing **one flow at a time** — upload, then share, then view, then revoke. Draw a box for S3, a box for Postgres, a line for the token. Once that picture stuck, the code felt less like magic.
+
+### Clerk kept sending me back to login (the redirect loop)
+
+Symptoms: sign in → dashboard → a few clicks later → login again. Sometimes an infinite loop. Home page buttons didn't update after auth.
+
+**What was going wrong:**
+- Old Clerk env vars (`NEXT_PUBLIC_CLERK_AFTER_SIGN_IN_URL`) — Clerk v7 wants `*_FALLBACK_REDIRECT_URL` instead.
+- `proxy.ts` wasn't allowing `/__clerk/(.*)` through the matcher, so Clerk's handshake broke.
+- On Windows, **system clock drift** caused JWT `nbf` errors — Clerk thought my token wasn't valid yet.
+
+**Fixes:** Updated `.env` to the v7 redirect names, added `/__clerk/(.*)` to the proxy matcher, set `clockSkewInMs` in middleware, and synced my PC clock when loops came back.
+
+### Database: "Failed to connect to upstream database"
+
+Prisma Postgres over a pooled URL + SSL was finicky locally and on Vercel.
+
+**Fixes:** Used the `pg` adapter with an explicit Pool in `lib/prisma.ts`, tuned `sslmode` (`verify-full` / `require` depending on host), and added a **graceful error banner** on the dashboard so a bad DB moment doesn't white-screen the whole app.
+
+### I shared three links but the UI showed one status
+
+Classic **data model vs UI** mismatch. The backend correctly created **one `ShareLink` row per share**. The table only looked at `doc.shares[0]` — so link #2 and #3 existed in the DB but the UI lied.
+
+**Fix:** Rebuilt the shares panel to list **every** link, with per-link revoke/restore/copy. Mental model shift: *one document, many access grants* — not one badge for the whole file.
+
+### The recipient view page silently broke
+
+While hardening the view route, I validated the UUID token but accidentally dropped `include: { document: true }` from the lookup. The page tried to read `link.document.s3Key` on `undefined`. Fun.
+
+**Fix:** Centralized lookups in `getShareLinkByToken()` in the DAL so the document is **always** included. Validate token shape first, then fetch with relations.
+
+### Security headers blocked Clerk entirely
+
+I added CSP in `next.config.ts` feeling responsible. Then `clerk.browser.js` showed `(blocked:csp)` in Network tab and the UserButton died.
+
+**Lesson:** CSP has separate rules for **connect** (API calls) and **script** (loading JS). I allowed Clerk in `connect-src` but forgot `script-src`. Clerk's docs spell out the FAPI domains — worth reading before copying a generic CSP snippet.
+
+### Clerk profile modal looked like a ghost
+
+Manage account opened, but I could read my dashboard *through* the modal. Transparent panels everywhere.
+
+**Cause:** I themed Clerk with `colorBackground: "hsl(var(--background))"` while my app uses **oklch** tokens. Browser saw invalid CSS → no background.
+
+**Fix:** Use `var(--background)` directly, force solid surfaces in `lib/clerk-appearance.ts`, and a small safety net in `globals.css` for Clerk's `.cl-cl-*` classes.
+
+### Zod yelled about deprecated `.cuid()`
+
+Prisma still generates CUID v1 IDs. Zod 4 pushes you toward `.cuid2()` or regex. Wrong validator = confusing validation errors at the action boundary.
+
+**Fix:** Regex aligned with Prisma's CUID v1 pattern in `lib/validators/documents.ts`. Small thing, hours of confusion if you don't know the version mismatch.
+
+### Full page flash after every upload
+
+`window.location.reload()` worked but felt cheap — white flash, scroll jump, lost UI state.
+
+**Fix:** `router.refresh()` after Server Actions + `revalidatePath` on the server. Same fresh data, none of the jarring reload.
+
+### Tailwind v4 syntax tripped me up
+
+Things like `bg-gradient-to-b` → `bg-linear-to-b`, new `@theme inline` setup. Not hard, just different from every Tailwind 3 tutorial.
+
+**Fix:** Checked the [Tailwind v4 upgrade notes](https://tailwindcss.com/docs/upgrade-guide) when a class "suddenly did nothing."
+
+---
+
+### If you're building something similar
+
+You don't need to nail everything on day one. This project got **better after** the demo worked — validation, DAL, CSP, error boundaries were all phase-two hardening.
+
+The pattern that saved me: **make it work → trace one request → harden one boundary → commit**. Repeat.
+
+Questions or "I hit the same Clerk loop" — [open an issue](https://github.com/ShuvaMallickPro/secure-doc-delivery-saas/issues) or reach out on GitHub.
+
+---
+
 ## Roadmap
 
 - [x] Marketing landing page
@@ -340,4 +425,4 @@ Private / portfolio MVP. All rights reserved unless otherwise specified by the p
 
 **Shuva Mallick** — [GitHub](https://github.com/ShuvaMallickPro)
 
-Built as a secure document delivery MVP with revocable access control.
+Upload sensitive files to private storage, share a unique link with each recipient, and revoke access the moment you need to—no recipient account required. Built with Next.js 16, Clerk, Prisma, AWS S3, and optional OpenAI summaries.
